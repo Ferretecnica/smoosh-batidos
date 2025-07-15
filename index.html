@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <!-- SEO Meta Tags -->
+    <title>Smoosh Café - Café de Especialidad y Repostería</title>
+    <meta name="description" content="Descubre el mejor café de especialidad en Smoosh. Pide en línea nuestros cafés, tés y repostería artesanal. Entrega rápida y segura.">
+    <meta name="keywords" content="café, cafetería, delivery, online, especialidad, repostería, smoosh">
+    <meta name="author" content="Smoosh Café">
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://tu-url-de-vercel.app/">
+    <meta property="og:title" content="Smoosh Café - Café de Especialidad y Repostería">
+    <meta property="og:description" content="Pide en línea nuestros cafés, smoothies y repostería artesanal.">
+    <meta property="og:image" content="https://placehold.co/1200x630/5a3a2a/ffffff?text=Smoosh+Café">
+
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:url" content="https://tu-url-de-vercel.app/">
+    <meta property="twitter:title" content="Smoosh Café - Café de Especialidad y Repostería">
+    <meta property="twitter:description" content="Pide en línea nuestros cafés, tés y repostería artesanal.">
+    <meta property="twitter:image" content="https://placehold.co/1200x630/5a3a2a/ffffff?text=Smoosh+Café">
+
+    <link rel="stylesheet" href="./css/style.css">
+    <link rel="icon" href="https://placehold.co/32x32/5a3a2a/ffffff?text=S" type="image/png">
+</head>
+<body>
+
+    <header class="main-header">
+        <div class="container">
+            <a href="/" class="logo">SMOOSH</a>
+            <nav>
+                <a href="/#menu">Menú</a>
+                <a href="/carrito.html" class="cart-link">
+                    Carrito <span id="cart-count">0</span>
+                </a>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <section class="hero">
+            <div class="container">
+                <h1>El sabor que te mueve.</h1>
+                <p>Café de especialidad y delicias recién hechas, a un clic de distancia.</p>
+                <a href="#menu" class="btn-primary">Ver Menú</a>
+            </div>
+        </section>
+
+        <section id="menu" class="menu-section">
+            <div class="container">
+                <h2>Nuestro Menú</h2>
+                <div id="category-filters" class="category-filters">
+                    <!-- Las categorías se cargarán aquí -->
+                </div>
+                <div id="product-grid" class="product-grid">
+                    <!-- Los productos se cargarán aquí -->
+                    <div class="loader">Cargando delicias...</div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="main-footer">
+        <div class="container">
+            <p>&copy; 2025 Smoosh Café. Todos los derechos reservados.</p>
+        </div>
+    </footer>
+
+    <script src="./js/app.js"></script>
+</body>
+</html>
