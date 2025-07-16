@@ -2,7 +2,7 @@
 // JAVASCRIPT PRINCIPAL PARA SMOOSH CAFÉ (vFinal con cálculo de precios en cliente)
 // ===============================================================
 
-const API_URL = 'https://script.google.com/macros/s/AKfycbxKSgAume0yYInY46Q8KKDH1BFJJEEjRQuTUFm0T71fJ_-_ogHULt9PMH4KtT0xwsVp/exec';
+const API_URL = 'https://script.google.com/macros/s/AKfycbyxek6CaJQaL3mUimBFWg0QavSczVO9Qqn904Po3btRJrr1KElL6zcKSKVNAF4kYfaf/exec';
 const WHATSAPP_NUMBER = '50584016969';
 const CURRENCY_SYMBOL = 'C$'; // Símbolo de moneda unificado
 let allProducts = [];
