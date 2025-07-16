@@ -1,9 +1,10 @@
 // ===============================================================
-// JAVASCRIPT PRINCIPAL PARA SMOOSH CAFÉ (Modernizado)
+// JAVASCRIPT PRINCIPAL PARA SMOOSH CAFÉ (vFinal con C$)
 // ===============================================================
 
 const API_URL = 'https://script.google.com/macros/s/AKfycbxKSgAume0yYInY46Q8KKDH1BFJJEEjRQuTUFm0T71fJ_-_ogHULt9PMH4KtT0xwsVp/exec';
-const WHATSAPP_NUMBER = '50584016969'; // Tu número de WhatsApp
+const WHATSAPP_NUMBER = '50584016969';
+const CURRENCY_SYMBOL = 'C$'; // Símbolo de moneda unificado
 let allProducts = [];
 let selectedVariant = null;
 
@@ -64,21 +65,26 @@ function updateCartCount() {
 function renderProducts(productsToRender) {
     const grid = document.getElementById('product-grid');
     if (!grid) return;
-    if (productsToRender.length === 0) {
+    if (!productsToRender || productsToRender.length === 0) {
         grid.innerHTML = '<p class="loader">No hay productos disponibles.</p>';
         return;
     }
-    grid.innerHTML = productsToRender.map(p => `
+    grid.innerHTML = productsToRender.map(p => {
+        const priceHtml = p.price_prefix 
+            ? `<span class="text-sm font-medium text-gray-500">${p.price_prefix}</span> ${CURRENCY_SYMBOL}${p.base_price.toFixed(2)}`
+            : `${CURRENCY_SYMBOL}${p.base_price.toFixed(2)}`;
+
+        return `
         <div class="product-card fade-in">
             <a href="./producto.html?p=${p.slug}">
                 <img src="${p.imageUrl}" alt="${p.name}" loading="lazy">
                 <div class="product-info">
                     <h3>${p.name}</h3>
-                    <p>$${p.base_price.toFixed(2)}</p>
+                    <p class="text-lg font-bold text-green-700">${priceHtml}</p>
                 </div>
             </a>
         </div>
-    `).join('');
+    `}).join('');
 }
 
 function renderCategoryFilters(products) {
@@ -132,7 +138,7 @@ async function renderProductDetail() {
                 <h1>${product.name}</h1>
                 <p class="description">${product.description}</p>
                 <div id="variants-container"></div>
-                <p class="price" id="product-price">$${initialPrice.toFixed(2)}</p>
+                <p class="price" id="product-price">${CURRENCY_SYMBOL}${initialPrice.toFixed(2)}</p>
                 <button class="btn-primary" id="add-to-cart-btn">Añadir al Carrito</button>
             </div>
         `;
@@ -171,7 +177,7 @@ function renderVariantOptions(product) {
             e.target.classList.add('active');
             const variantIndex = parseInt(e.target.dataset.variantIndex);
             selectedVariant = product.variants[variantIndex];
-            document.getElementById('product-price').textContent = `$${selectedVariant.price.toFixed(2)}`;
+            document.getElementById('product-price').textContent = `${CURRENCY_SYMBOL}${selectedVariant.price.toFixed(2)}`;
         });
     });
 }
@@ -191,18 +197,18 @@ function renderCartPage() {
             <img src="${item.imageUrl}" alt="${item.name}">
             <div class="cart-item-info">
                 <h3>${item.name}</h3>
-                <p>$${item.price.toFixed(2)}</p>
+                <p>${CURRENCY_SYMBOL}${item.price.toFixed(2)}</p>
             </div>
             <div class="quantity-controls">
                 <button class="quantity-btn" data-id="${item.cartItemId}" data-change="-1">-</button>
                 <span>${item.quantity}</span>
                 <button class="quantity-btn" data-id="${item.cartItemId}" data-change="1">+</button>
             </div>
-            <p class="item-total">$${(item.price * item.quantity).toFixed(2)}</p>
+            <p class="item-total">${CURRENCY_SYMBOL}${(item.price * item.quantity).toFixed(2)}</p>
             <button class="remove-item-btn" data-id="${item.cartItemId}" title="Eliminar item">&times;</button>
         </div>
     `).join('');
-    summaryContainer.innerHTML = `<h3>Resumen</h3><p class="total">Total: $${cart.getTotal().toFixed(2)}</p><a href="./checkout.html" class="btn-primary">Finalizar Compra</a>`;
+    summaryContainer.innerHTML = `<h3>Resumen</h3><p class="total">Total: ${CURRENCY_SYMBOL}${cart.getTotal().toFixed(2)}</p><a href="./checkout.html" class="btn-primary">Finalizar Compra</a>`;
     
     document.querySelectorAll('.quantity-btn').forEach(button => {
         button.addEventListener('click', e => {
@@ -228,18 +234,15 @@ function renderCheckoutSummary() {
         ${items.map(item => `
             <div class="summary-item">
                 <span>${item.quantity} x ${item.name}</span>
-                <span>$${(item.price * item.quantity).toFixed(2)}</span>
+                <span>${CURRENCY_SYMBOL}${(item.price * item.quantity).toFixed(2)}</span>
             </div>`).join('')}
         <div class="summary-item total">
             <span>Total</span>
-            <span>$${cart.getTotal().toFixed(2)}</span>
+            <span>${CURRENCY_SYMBOL}${cart.getTotal().toFixed(2)}</span>
         </div>`;
 }
 
-// --- LÓGICA DE LA APLICACIÓN ---
-
 async function fetchProducts() {
-    const grid = document.getElementById('product-grid');
     try {
         const response = await fetch(API_URL);
         if (!response.ok) throw new Error('Network response was not ok.');
@@ -247,14 +250,13 @@ async function fetchProducts() {
         allProducts = data.products || [];
     } catch (error) {
         console.error("Error al cargar los productos:", error);
+        const grid = document.getElementById('product-grid');
         if (grid) grid.innerHTML = '<p class="loader">Error al cargar el menú. Intenta de nuevo más tarde.</p>';
     }
 }
 
 function generateOrderNumber() {
-    const timestamp = Date.now().toString().slice(-4);
-    const random = Math.floor(Math.random() * 100).toString().padStart(2, '0');
-    return `SMOOSH-${timestamp}${random}`;
+    return `SMOOSH-${Date.now().toString().slice(-6)}`;
 }
 
 async function submitOrder(e) {
@@ -264,14 +266,11 @@ async function submitOrder(e) {
     btn.textContent = 'Procesando...';
     
     const form = e.target;
-    const orderNumber = generateOrderNumber();
     const orderData = {
-        orderNumber: orderNumber,
+        orderNumber: generateOrderNumber(),
         customer: { 
-            name: form.name.value, 
-            email: form.email.value, 
-            address: form.address.value, 
-            phone: form.phone.value 
+            name: form.name.value, email: form.email.value, 
+            address: form.address.value, phone: form.phone.value 
         },
         items: cart.getItems(),
         total: cart.getTotal(),
@@ -280,14 +279,10 @@ async function submitOrder(e) {
 
     try {
         await fetch(API_URL, { 
-            method: 'POST', 
-            mode: 'no-cors', 
-            headers: { 'Content-Type': 'application/json' },
+            method: 'POST', mode: 'no-cors', headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(orderData) 
         });
-        
         showSuccessModal(orderData);
-
     } catch (error) {
         console.error('Error submitting order:', error);
         showSimpleModal("Hubo un error al procesar tu pedido. Por favor, intenta de nuevo.");
@@ -297,15 +292,12 @@ async function submitOrder(e) {
     }
 }
 
-// --- MODALES ---
 function showSimpleModal(message) {
     const modal = document.getElementById('message-modal');
     const textEl = document.getElementById('modal-message-text');
     if (!modal || !textEl) return;
-
     textEl.innerHTML = `<p>${message}</p>`;
     modal.style.display = 'block';
-
     const closeModal = () => modal.style.display = 'none';
     modal.querySelector('.close-button').onclick = closeModal;
     window.onclick = e => { if (e.target == modal) closeModal(); };
@@ -315,62 +307,32 @@ function showSuccessModal(orderData) {
     const modal = document.getElementById('message-modal');
     const textEl = document.getElementById('modal-message-text');
     if (!modal || !textEl) return;
-
-    let whatsappMessage = `¡Hola Smoosh Café! 👋 Quiero confirmar mi pedido:\n\n`;
-    whatsappMessage += `*Número de Orden:* ${orderData.orderNumber}\n`;
-    whatsappMessage += `*Cliente:* ${orderData.customer.name}\n`;
-    whatsappMessage += `*Teléfono:* ${orderData.customer.phone}\n\n`;
-    whatsappMessage += `*Pedido:*\n`;
+    let whatsappMessage = `¡Hola Smoosh Café! 👋 Quiero confirmar mi pedido:\n\n*Número de Orden:* ${orderData.orderNumber}\n*Cliente:* ${orderData.customer.name}\n*Teléfono:* ${orderData.customer.phone}\n\n*Pedido:*\n`;
     orderData.items.forEach(item => {
         whatsappMessage += `- ${item.quantity}x ${item.name}\n`;
     });
-    whatsappMessage += `\n*Total:* $${orderData.total.toFixed(2)}\n\n`;
-    whatsappMessage += `¡Gracias!`;
-
+    whatsappMessage += `\n*Total:* ${CURRENCY_SYMBOL}${orderData.total.toFixed(2)}\n\n¡Gracias!`;
     const whatsappUrl = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(whatsappMessage)}`;
-
-    textEl.innerHTML = `
-        <h3>¡Pedido Realizado con Éxito!</h3>
-        <p>Tu número de orden es:</p>
-        <div class="order-number">${orderData.orderNumber}</div>
-        <p>Por favor, confirma tu pedido enviándonos un mensaje por WhatsApp.</p>
-        <a href="${whatsappUrl}" target="_blank" class="btn-primary btn-whatsapp" id="whatsapp-confirm-btn">
-            <i class="fab fa-whatsapp"></i> Confirmar por WhatsApp
-        </a>
-    `;
-
+    textEl.innerHTML = `<h3>¡Pedido Realizado con Éxito!</h3><p>Tu número de orden es:</p><div class="order-number">${orderData.orderNumber}</div><p>Por favor, confirma tu pedido enviándonos un mensaje por WhatsApp.</p><a href="${whatsappUrl}" target="_blank" class="btn-primary btn-whatsapp" id="whatsapp-confirm-btn"><i class="fab fa-whatsapp"></i> Confirmar por WhatsApp</a>`;
     modal.style.display = 'block';
-
     document.getElementById('whatsapp-confirm-btn').onclick = () => {
-        setTimeout(() => {
-            cart.clear();
-            window.location.href = './index.html';
-        }, 500); 
+        setTimeout(() => { cart.clear(); window.location.href = './index.html'; }, 500); 
     };
-
-    const closeModal = () => {
-        modal.style.display = 'none';
-        cart.clear();
-        window.location.href = './index.html';
-    };
-
+    const closeModal = () => { modal.style.display = 'none'; cart.clear(); window.location.href = './index.html'; };
     modal.querySelector('.close-button').onclick = closeModal;
 }
 
-
-// --- INICIALIZACIÓN ---
 document.addEventListener('DOMContentLoaded', async () => {
     updateCartCount();
-    
-    document.querySelector('main')?.classList.add('fade-in');
-
     const path = window.location.pathname;
+    document.querySelector('main')?.classList.add('fade-in');
     if (path.endsWith('/') || path.endsWith('/index.html')) {
         await fetchProducts();
         renderProducts(allProducts);
         renderCategoryFilters(allProducts);
     } else if (path.endsWith('/producto.html')) {
-        await renderProductDetail();
+        await fetchProducts();
+        renderProductDetail();
     } else if (path.endsWith('/carrito.html')) {
         renderCartPage();
     } else if (path.endsWith('/checkout.html')) {
