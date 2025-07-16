@@ -150,7 +150,7 @@ img {
 
 /* --- Hero Section --- */
 .hero {
-    background: linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.4)), url('https://placehold.co/1920x1080/1e3932/ffffff') no-repeat center center/cover;
+    background: linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.4)), url('https://images.unsplash.com/photo-1559925393-8be0ec4767c8?q=80&w=1935&auto=format&fit=crop') no-repeat center center/cover;
     color: var(--white-color);
     text-align: center;
     padding: 120px 0;
