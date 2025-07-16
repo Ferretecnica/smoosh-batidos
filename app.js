@@ -1,5 +1,5 @@
 // ===============================================================
-// JAVASCRIPT PRINCIPAL PARA SMOOSH CAFÉ - v1 (Modernizado)
+// JAVASCRIPT PRINCIPAL PARA SMOOSH CAFÉ (Modernizado)
 // ===============================================================
 
 const API_URL = 'https://script.google.com/macros/s/AKfycbx5Fzjov6cYVSDitc3ZNJuOMFdMFri5BBOva6pIty3lgrRsOug-uioROp357mzjOl2w/exec';
@@ -9,9 +9,9 @@ let selectedVariant = null;
 
 // --- LÓGICA DEL CARRITO ---
 const cart = {
-    getItems: () => JSON.parse(localStorage.getItem('smooshCartV1') || '[]'),
+    getItems: () => JSON.parse(localStorage.getItem('smooshCart') || '[]'),
     saveItems: (items) => {
-        localStorage.setItem('smooshCartV1', JSON.stringify(items));
+        localStorage.setItem('smooshCart', JSON.stringify(items));
         updateCartCount();
     },
     addItem: (product, variant) => {
@@ -70,7 +70,7 @@ function renderProducts(productsToRender) {
     }
     grid.innerHTML = productsToRender.map(p => `
         <div class="product-card fade-in">
-            <a href="./producto-v1.html?p=${p.slug}">
+            <a href="./producto.html?p=${p.slug}">
                 <img src="${p.imageUrl}" alt="${p.name}" loading="lazy">
                 <div class="product-info">
                     <h3>${p.name}</h3>
@@ -182,7 +182,7 @@ function renderCartPage() {
     if (!itemsContainer || !summaryContainer) return;
     const items = cart.getItems();
     if (items.length === 0) {
-        itemsContainer.innerHTML = '<p class="empty-cart-message">Tu carrito está vacío. <a href="./index-v1.html#menu">Ver menú</a></p>';
+        itemsContainer.innerHTML = '<p class="empty-cart-message">Tu carrito está vacío. <a href="./index.html#menu">Ver menú</a></p>';
         summaryContainer.innerHTML = '';
         return;
     }
@@ -202,7 +202,7 @@ function renderCartPage() {
             <button class="remove-item-btn" data-id="${item.cartItemId}" title="Eliminar item">&times;</button>
         </div>
     `).join('');
-    summaryContainer.innerHTML = `<h3>Resumen</h3><p class="total">Total: $${cart.getTotal().toFixed(2)}</p><a href="./checkout-v1.html" class="btn-primary">Finalizar Compra</a>`;
+    summaryContainer.innerHTML = `<h3>Resumen</h3><p class="total">Total: $${cart.getTotal().toFixed(2)}</p><a href="./checkout.html" class="btn-primary">Finalizar Compra</a>`;
     
     document.querySelectorAll('.quantity-btn').forEach(button => {
         button.addEventListener('click', e => {
@@ -221,7 +221,7 @@ function renderCheckoutSummary() {
     if (!summaryEl) return;
     const items = cart.getItems();
     if (items.length === 0) {
-        window.location.href = './carrito-v1.html';
+        window.location.href = './carrito.html';
         return;
     }
     summaryEl.innerHTML = `
@@ -344,14 +344,14 @@ function showSuccessModal(orderData) {
     document.getElementById('whatsapp-confirm-btn').onclick = () => {
         setTimeout(() => {
             cart.clear();
-            window.location.href = './index-v1.html';
+            window.location.href = './index.html';
         }, 500); 
     };
 
     const closeModal = () => {
         modal.style.display = 'none';
         cart.clear();
-        window.location.href = './index-v1.html';
+        window.location.href = './index.html';
     };
 
     modal.querySelector('.close-button').onclick = closeModal;
@@ -365,15 +365,15 @@ document.addEventListener('DOMContentLoaded', async () => {
     document.querySelector('main')?.classList.add('fade-in');
 
     const path = window.location.pathname;
-    if (path.endsWith('/') || path.endsWith('/index-v1.html')) {
+    if (path.endsWith('/') || path.endsWith('/index.html')) {
         await fetchProducts();
         renderProducts(allProducts);
         renderCategoryFilters(allProducts);
-    } else if (path.endsWith('/producto-v1.html')) {
+    } else if (path.endsWith('/producto.html')) {
         await renderProductDetail();
-    } else if (path.endsWith('/carrito-v1.html')) {
+    } else if (path.endsWith('/carrito.html')) {
         renderCartPage();
-    } else if (path.endsWith('/checkout-v1.html')) {
+    } else if (path.endsWith('/checkout.html')) {
         renderCheckoutSummary();
         document.getElementById('checkout-form')?.addEventListener('submit', submitOrder);
     }
