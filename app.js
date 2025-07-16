@@ -1,5 +1,5 @@
 // ===============================================================
-// JAVASCRIPT PRINCIPAL PARA SMOOSH CAFÉ (vFinal con C$)
+// JAVASCRIPT PRINCIPAL PARA SMOOSH CAFÉ (vFinal con cálculo de precios en cliente)
 // ===============================================================
 
 const API_URL = 'https://script.google.com/macros/s/AKfycbxKSgAume0yYInY46Q8KKDH1BFJJEEjRQuTUFm0T71fJ_-_ogHULt9PMH4KtT0xwsVp/exec';
@@ -17,7 +17,8 @@ const cart = {
     },
     addItem: (product, variant) => {
         let items = cart.getItems();
-        const cartItemId = variant ? product.id + variant.sku_suffix : product.id;
+        // El ID del producto en el carrito se basa en el ID del producto y el nombre de la variante para ser único
+        const cartItemId = variant ? product.id + '-' + variant.name.replace(/\s+/g, '') : product.id;
         const existingItem = items.find(item => item.cartItemId === cartItemId);
 
         if (existingItem) {
@@ -70,9 +71,21 @@ function renderProducts(productsToRender) {
         return;
     }
     grid.innerHTML = productsToRender.map(p => {
-        const priceHtml = p.price_prefix 
-            ? `<span class="text-sm font-medium text-gray-500">${p.price_prefix}</span> ${CURRENCY_SYMBOL}${p.base_price.toFixed(2)}`
-            : `${CURRENCY_SYMBOL}${p.base_price.toFixed(2)}`;
+        let displayPrice = p.base_price;
+        let pricePrefix = "";
+
+        // Lógica para calcular el precio más bajo en el cliente (app.js)
+        if (p.variants && p.variants.length > 0) {
+            const validPrices = p.variants.map(v => parseFloat(v.price)).filter(price => !isNaN(price));
+            if (validPrices.length > 0) {
+                displayPrice = Math.min(...validPrices);
+                pricePrefix = "Desde";
+            }
+        }
+
+        const priceHtml = pricePrefix 
+            ? `<span class="text-sm font-medium text-gray-500">${pricePrefix}</span> ${CURRENCY_SYMBOL}${displayPrice.toFixed(2)}`
+            : `${CURRENCY_SYMBOL}${displayPrice.toFixed(2)}`;
 
         return `
         <div class="product-card fade-in">
@@ -121,12 +134,13 @@ async function renderProductDetail() {
         document.title = `${product.name} - Smoosh Café`;
         document.querySelector('meta[name="description"]').setAttribute("content", product.description);
 
-        let initialPrice = product.base_price;
+        let initialPrice;
         if (product.variants && product.variants.length > 0) {
             selectedVariant = product.variants[0];
             initialPrice = selectedVariant.price;
         } else {
             selectedVariant = null;
+            initialPrice = product.base_price;
         }
 
         container.innerHTML = `
@@ -165,7 +179,7 @@ function renderVariantOptions(product) {
         <div class="variant-options">
             ${product.variants.map((variant, index) => `
                 <button class="variant-btn ${index === 0 ? 'active' : ''}" data-variant-index="${index}">
-                    ${variant.name}
+                    ${variant.name} (${CURRENCY_SYMBOL}${variant.price.toFixed(2)})
                 </button>
             `).join('')}
         </div>
