@@ -2,7 +2,7 @@
 // JAVASCRIPT PRINCIPAL PARA SMOOSH CAFÉ (Modernizado)
 // ===============================================================
 
-const API_URL = 'https://script.google.com/macros/s/AKfycbx5Fzjov6cYVSDitc3ZNJuOMFdMFri5BBOva6pIty3lgrRsOug-uioROp357mzjOl2w/exec';
+const API_URL = 'https://script.google.com/macros/s/AKfycbxKSgAume0yYInY46Q8KKDH1BFJJEEjRQuTUFm0T71fJ_-_ogHULt9PMH4KtT0xwsVp/exec';
 const WHATSAPP_NUMBER = '50584016969'; // Tu número de WhatsApp
 let allProducts = [];
 let selectedVariant = null;
