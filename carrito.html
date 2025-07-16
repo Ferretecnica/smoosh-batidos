@@ -5,18 +5,26 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Tu Carrito de Compras - Smoosh Café</title>
     <meta name="description" content="Revisa tu pedido y prepárate para disfrutar del mejor café y repostería de Smoosh.">
-    <link rel="stylesheet" href="style.css">
-    <link rel="icon" href="https://placehold.co/32x32/5a3a2a/ffffff?text=S" type="image/png">
+    
+    <!-- Fonts & Icons -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <!-- Stylesheet -->
+    <link rel="stylesheet" href="./style.css">
+    <link rel="icon" href="https://placehold.co/32x32/006241/ffffff?text=S" type="image/png">
 </head>
 <body>
 
     <header class="main-header">
         <div class="container">
-            <a href="/" class="logo">SMOOSH</a>
+            <a href="./index.html" class="logo">SMOOSH</a>
             <nav>
-                <a href="/#menu">Menú</a>
-                <a href="/carrito.html" class="cart-link">
-                    Carrito <span id="cart-count">0</span>
+                <a href="./index.html#menu">Menú</a>
+                <a href="./carrito.html" class="cart-link">
+                    <i class="fas fa-shopping-bag"></i> Carrito <span id="cart-count">0</span>
                 </a>
             </nav>
         </div>
@@ -38,10 +46,17 @@
 
     <footer class="main-footer">
         <div class="container">
-            <p>&copy; 2024 Smoosh Café. Todos los derechos reservados.</p>
+            <p>&copy; 2025 Smoosh Café. Todos los derechos reservados.</p>
         </div>
     </footer>
 
-    <script src="app.js"></script>
+    <div id="message-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-button">&times;</span>
+            <div id="modal-message-text"></div>
+        </div>
+    </div>
+
+    <script src="./app.js"></script>
 </body>
 </html>
